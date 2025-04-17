@@ -1,8 +1,8 @@
-﻿namespace CmdNET.Monologue;
+﻿namespace Monologue;
 
-public class MonologueFormatter : IMonologueFormatter
+public class MonologFormatter : IMonologFormatter
 {
-    public string Format(IMonologue m)
+    public string Format(IMonolog m)
     {
         string s = "";
 

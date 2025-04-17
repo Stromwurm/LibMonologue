@@ -2,7 +2,7 @@
 
 namespace CmdNET.Monologue;
 
-public class Monolog : IMonologue
+public class Monolog : IMonolog
 {
     private string _callerFilePath = string.Empty;
     public string CallerFilePath => _callerFilePath;
@@ -25,13 +25,13 @@ public class Monolog : IMonologue
     private LogLevel _severity = MonologueContext.DefaultSeverity;
     public LogLevel Severity => _severity;
 
-    public IMonologue LinkWith(IMonologue other)
+    public IMonolog LinkWith(IMonolog other)
     {
         _childOf = other.Id;
         return this;
     }
 
-    public IMonologue SetCaller([CallerFilePath] string cfp = "", [CallerMemberName] string cmn = "", [CallerLineNumber] int cln = 0)
+    public IMonolog SetCaller([CallerFilePath] string cfp = "", [CallerMemberName] string cmn = "", [CallerLineNumber] int cln = 0)
     {
         _callerFilePath = cfp;
         _callerLineNumber = cln;
@@ -39,20 +39,20 @@ public class Monolog : IMonologue
         return this;
     }
 
-    public IMonologue SetMessage(string message)
+    public IMonolog SetMessage(string message)
     {
         _message = message;
         return this;
     }
 
-    public IMonologue SetMessage(string message, params object[] args)
+    public IMonolog SetMessage(string message, params object[] args)
     {
         string s = string.Format(message, args);
         _message = s;
         return this;
     }
 
-    public IMonologue SetSeverity(LogLevel severity)
+    public IMonolog SetSeverity(LogLevel severity)
     {
         _severity = severity;
         return this;

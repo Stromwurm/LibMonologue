@@ -1,6 +1,6 @@
-﻿namespace CmdNET.Monologue;
+﻿namespace Monologue;
 
 public interface ITalkative
 {
-    public event EventHandler<IMonologue> LogMessage;
+    public event EventHandler<IMonolog> LogMessage;
 }

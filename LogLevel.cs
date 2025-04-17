@@ -1,4 +1,4 @@
-﻿namespace CmdNET.Monologue;
+﻿namespace Monologue;
 
 public enum LogLevel
 {

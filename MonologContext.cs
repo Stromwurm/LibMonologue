@@ -4,12 +4,12 @@ using Serilog;
 using Serilog.Core;
 using Serilog.Events;
 
-namespace CmdNET.Monologue;
+namespace Monologue;
 
-public static class MonologueContext
+public static class MonologContext
 {
-    private static IMonologueFormatter? _formatter;
-    public static IMonologueFormatter? Formatter => _formatter;
+    private static IMonologFormatter? _formatter;
+    public static IMonologFormatter? Formatter => _formatter;
 
     private static LogLevel _defaultSeverity = LogLevel.Information;
     public static LogLevel DefaultSeverity => _defaultSeverity;
@@ -27,14 +27,14 @@ public static class MonologueContext
     public static LogLevel MinLevel => _minValidLogLevel;
 
     /// <summary>
-    /// Fires, when an <see cref="IMonologue"/> is committed, but the context has no <see cref="Logger"/>.
+    /// Fires, when an <see cref="IMonolog"/> is committed, but the context has no <see cref="Logger"/>.
     /// </summary>
     public static EventHandler NoLogger;
 
     /// <summary>
-    /// Fires, when an <see cref="IMonologue"/> was passed to <see cref="Logger"/>. This only happens if the context has an <see cref="ILogger"/>.
+    /// Fires, when an <see cref="IMonolog"/> was passed to <see cref="Logger"/>. This only happens if the context has an <see cref="ILogger"/>.
     /// </summary>
-    public static EventHandler<IMonologue> MonologueCommited;
+    public static EventHandler<IMonolog> MonologueCommited;
 
     public static void SetFormatter(IMonologueFormatter formatter)
     {
@@ -87,7 +87,7 @@ public static class MonologueContext
             .MinimumLevel.ControlledBy(_levelSwitch)
             .CreateLogger();
     }
-    public static IMonologue CommitMonologue(IMonologue m, [CallerFilePath] string cfp = "", [CallerMemberName] string cmn = "", [CallerLineNumber] int cln = 0)
+    public static IMonolog CommitMonologue(IMonolog m, [CallerFilePath] string cfp = "", [CallerMemberName] string cmn = "", [CallerLineNumber] int cln = 0)
     {
         m.SetCaller(cfp, cmn, cln);
 
@@ -114,7 +114,7 @@ public static class MonologueContext
 
         return m;
     }
-    public static IMonologue Commit(this IMonologue m, [CallerFilePath] string cfp = "", [CallerMemberName] string cmn = "", [CallerLineNumber] int cln = 0)
+    public static IMonolog Commit(this IMonolog m, [CallerFilePath] string cfp = "", [CallerMemberName] string cmn = "", [CallerLineNumber] int cln = 0)
     {
         return CommitMonologue(m, cfp, cmn, cln);
 

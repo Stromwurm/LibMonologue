@@ -1,6 +1,6 @@
-﻿namespace CmdNET.Monologue;
+﻿namespace Monologue;
 
-public interface IMonologueFormatter
+public interface IMonologFormatter
 {
-    string Format(IMonologue m);
+    string Format(IMonolog m);
 }
