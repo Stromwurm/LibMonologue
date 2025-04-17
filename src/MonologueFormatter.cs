@@ -1,5 +1,8 @@
 ﻿namespace Monologue;
 
+/// <summary>
+/// Default implementation of <see cref="IMonologFormatter"/>. Made to work with <see cref="Monolog"/>.
+/// </summary>
 public class MonologFormatter : IMonologFormatter
 {
     public string Format(IMonolog m)

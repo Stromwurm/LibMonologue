@@ -1,9 +1,10 @@
 ﻿using System.Runtime.CompilerServices;
 
-namespace CmdNET.Monologue;
+namespace Monologue;
 
 public class Monolog : IMonolog
 {
+
     private string _callerFilePath = string.Empty;
     public string CallerFilePath => _callerFilePath;
 
@@ -22,7 +23,7 @@ public class Monolog : IMonolog
     private string _message = string.Empty;
     public string Message => _message;
 
-    private LogLevel _severity = MonologueContext.DefaultSeverity;
+    private LogLevel _severity = MonologContext.DefaultSeverity;
     public LogLevel Severity => _severity;
 
     public IMonolog LinkWith(IMonolog other)
@@ -30,7 +31,6 @@ public class Monolog : IMonolog
         _childOf = other.Id;
         return this;
     }
-
     public IMonolog SetCaller([CallerFilePath] string cfp = "", [CallerMemberName] string cmn = "", [CallerLineNumber] int cln = 0)
     {
         _callerFilePath = cfp;
@@ -38,20 +38,17 @@ public class Monolog : IMonolog
         _callerMemberName = cmn;
         return this;
     }
-
     public IMonolog SetMessage(string message)
     {
         _message = message;
         return this;
     }
-
     public IMonolog SetMessage(string message, params object[] args)
     {
         string s = string.Format(message, args);
         _message = s;
         return this;
     }
-
     public IMonolog SetSeverity(LogLevel severity)
     {
         _severity = severity;

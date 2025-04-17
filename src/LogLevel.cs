@@ -1,5 +1,8 @@
 ﻿namespace Monologue;
 
+/// <summary>
+/// The level of severity.
+/// </summary>
 public enum LogLevel
 {
     Verbose = 0,

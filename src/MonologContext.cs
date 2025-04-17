@@ -6,24 +6,47 @@ using Serilog.Events;
 
 namespace Monologue;
 
+/// <summary>
+/// The context for all operations that are not individual log messages.
+/// </summary>
 public static class MonologContext
 {
     private static IMonologFormatter? _formatter;
+
+    /// <summary>
+    /// The <see cref="IMonologFormatter"/> to use for all logging operations.
+    /// </summary>
     public static IMonologFormatter? Formatter => _formatter;
 
     private static LogLevel _defaultSeverity = LogLevel.Information;
+
+    /// <summary>
+    /// The default severity for all <see cref="IMonolog"/>.
+    /// </summary>
     public static LogLevel DefaultSeverity => _defaultSeverity;
 
     private const string _settingVariableFromToText = "Setting '{0}' from '{1}' to '{2}'.";
     public static string SettingVariableFromToText => _settingVariableFromToText;
 
     private static ILogger? _logger;
+
+    /// <summary>
+    /// The logger used. Call <see cref="CreateFileLogger(string)"/> before calling <see cref="CommitMonolog(IMonolog, string, string, int)"/> or <see cref="Commit(IMonolog, string, string, int)"/>.
+    /// </summary>
     public static ILogger? Logger => _logger;
 
     private static LoggingLevelSwitch _levelSwitch = new();
-    public static LogLevel MinLoggableLevel => TranslateLogLevel(_levelSwitch.MinimumLevel);
+
+    /// <summary>
+    /// The current log level that all <see cref="IMonolog"/> have to have to be written to log.
+    /// </summary>
+    public static LogLevel CurrentMinLogLevel => TranslateLogLevel(_levelSwitch.MinimumLevel);
 
     private static LogLevel _minValidLogLevel = LogLevel.Verbose;
+
+    /// <summary>
+    /// The lowest <see cref="LogLevel"/> possible.
+    /// </summary>
     public static LogLevel MinLevel => _minValidLogLevel;
 
     /// <summary>
@@ -34,12 +57,23 @@ public static class MonologContext
     /// <summary>
     /// Fires, when an <see cref="IMonolog"/> was passed to <see cref="Logger"/>. This only happens if the context has an <see cref="ILogger"/>.
     /// </summary>
-    public static EventHandler<IMonolog> MonologueCommited;
+    public static EventHandler<IMonolog> MonologCommited;
 
-    public static void SetFormatter(IMonologueFormatter formatter)
+    /// <summary>
+    /// Sets <see cref="Formatter"/>.
+    /// </summary>
+    /// <param name="formatter"></param>
+    public static void SetFormatter(IMonologFormatter formatter)
     {
         _formatter = formatter;
     }
+
+    /// <summary>
+    /// Translate between <see cref="LogLevel"/> and <see cref="LogEventLevel"/>.
+    /// </summary>
+    /// <param name="level"></param>
+    /// <returns><see cref="LogEventLevel"/> equivalent of <paramref name="level"/>.</returns>
+    /// <exception cref="NotImplementedException"></exception>
     public static LogEventLevel TranslateLogLevel(LogLevel level)
     {
         switch (level)
@@ -60,6 +94,13 @@ public static class MonologContext
                 throw new NotImplementedException();
         }
     }
+
+    /// <summary>
+    /// Translate between <see cref="LogEventLevel"/> and <see cref="LogLevel"/>.
+    /// </summary>
+    /// <param name="level"></param>
+    /// <returns><see cref="LogLevel"/> equivalent of <paramref name="level"/>.</returns>
+    /// <exception cref="NotImplementedException"></exception>
     public static LogLevel TranslateLogLevel(LogEventLevel level)
     {
         switch (level)
@@ -80,6 +121,11 @@ public static class MonologContext
                 throw new NotImplementedException();
         }
     }
+
+    /// <summary>
+    /// Create a logger that writes to file using <paramref name="logfile"/>.
+    /// </summary>
+    /// <param name="logfile"></param>
     public static void CreateFileLogger(string logfile)
     {
         _logger = new LoggerConfiguration()
@@ -87,7 +133,16 @@ public static class MonologContext
             .MinimumLevel.ControlledBy(_levelSwitch)
             .CreateLogger();
     }
-    public static IMonolog CommitMonologue(IMonolog m, [CallerFilePath] string cfp = "", [CallerMemberName] string cmn = "", [CallerLineNumber] int cln = 0)
+
+    /// <summary>
+    /// Commit <paramref name="m"/> to be logged. Sets <see cref="IMonolog.CallerFilePath"/>, <see cref="IMonolog.CallerMemberName"/> and <see cref="IMonolog.CallerLineNumber"/>.
+    /// </summary>
+    /// <param name="m"></param>
+    /// <param name="cfp"></param>
+    /// <param name="cmn"></param>
+    /// <param name="cln"></param>
+    /// <returns>The modified <paramref name="m"/></returns>.
+    public static IMonolog CommitMonolog(IMonolog m, [CallerFilePath] string cfp = "", [CallerMemberName] string cmn = "", [CallerLineNumber] int cln = 0)
     {
         m.SetCaller(cfp, cmn, cln);
 
@@ -110,15 +165,29 @@ public static class MonologContext
             _logger.Write(level, s);
         }
 
-            MonologueCommited?.Invoke(null, m);
+            MonologCommited?.Invoke(null, m);
 
         return m;
     }
+
+    /// <summary>
+    /// Overload, see <see cref="CommitMonolog(IMonolog, string, string, int)"/> for details.
+    /// </summary>
+    /// <param name="m"></param>
+    /// <param name="cfp"></param>
+    /// <param name="cmn"></param>
+    /// <param name="cln"></param>
+    /// <returns></returns>
     public static IMonolog Commit(this IMonolog m, [CallerFilePath] string cfp = "", [CallerMemberName] string cmn = "", [CallerLineNumber] int cln = 0)
     {
-        return CommitMonologue(m, cfp, cmn, cln);
+        return CommitMonolog(m, cfp, cmn, cln);
 
     }
+
+    /// <summary>
+    /// Sets <see cref="CurrentMinLogLevel"/>. Effective immediately.
+    /// </summary>
+    /// <param name="level"></param>
     public static void SetMinLogLevel(LogLevel level)
     {
         _levelSwitch.MinimumLevel = TranslateLogLevel(level);
